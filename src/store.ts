@@ -10,16 +10,38 @@ import {
   type OnEdgesChange,
   type OnNodesChange,
 } from "@xyflow/react";
+import { v4 as uuidv4 } from "uuid";
+import { EdgeEndpoint } from "./types/node-types";
+
 const initialNodes = [
   {
-    id: "n1",
+    id: uuidv4(),
+    type: "text",
     position: { x: 0, y: 0 },
-    data: { label: "Node 1", style: "input" },
+    data: {
+      message: "test message 1",
+      handleTypes: [EdgeEndpoint.Source],
+    },
   },
-  { id: "n2", position: { x: 0, y: 100 }, data: { label: "Node 2" } },
+  {
+    id: uuidv4(),
+    type: "text",
+    position: { x: 300, y: -100 },
+    data: {
+      message: "test message 2",
+      handleTypes: [EdgeEndpoint.Source, EdgeEndpoint.Target],
+    },
+  },
 ];
-const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
-export type RFState = {
+const initialEdges = [
+  {
+    id: uuidv4(),
+    source: initialNodes[0].id,
+    target: initialNodes[1].id,
+    markerEnd: { type: MarkerType.Arrow, height: 20, width: 20 },
+  },
+];
+export type FlowStore = {
   nodes: Node[];
   edges: Edge[];
   nodeIDs: Record<string, number>;
@@ -36,7 +58,7 @@ export type RFState = {
   saveFlow: () => void;
 };
 
-export const useStore = create<RFState>((set, get) => ({
+export const useStore = create<FlowStore>((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
   nodeIDs: {},
@@ -50,8 +72,9 @@ export const useStore = create<RFState>((set, get) => ({
     return `${type}-${newIDs[type]}`;
   },
   addNode: (node) => {
-    const newNode = { ...node };
-
+    const newNode = { ...node, data: { ...node.data } };
+    // add default handle types for new nodes
+    newNode.data.handleTypes = [EdgeEndpoint.Source, EdgeEndpoint.Target];
     set({
       nodes: [...get().nodes, newNode],
     });
@@ -71,8 +94,6 @@ export const useStore = create<RFState>((set, get) => ({
       edges: addEdge(
         {
           ...connection,
-          type: "smoothstep",
-          animated: true,
           markerEnd: { type: MarkerType.Arrow, height: 20, width: 20 },
         },
         get().edges
@@ -88,7 +109,6 @@ export const useStore = create<RFState>((set, get) => ({
             data: { ...node.data, [fieldName]: fieldValue },
           };
         }
-
         return node;
       }),
     });

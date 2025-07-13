@@ -8,7 +8,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useShallow } from "zustand/shallow";
-import { useStore, type RFState } from "../store";
+import { useStore, type FlowStore } from "../store";
 import Sidebar from "./sidebar";
 import TextNode from "./text-node";
 import {
@@ -19,7 +19,7 @@ import {
   type DragEventHandler,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
-const selector = (state: RFState) => ({
+const selector = (state: FlowStore) => ({
   nodes: state.nodes,
   edges: state.edges,
   getNodeID: state.getNodeID,
@@ -28,6 +28,7 @@ const selector = (state: RFState) => ({
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
 });
+const nodeTypes = { text: TextNode };
 export default function PipelineUI() {
   const shallow = useShallow(selector);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -102,7 +103,7 @@ export default function PipelineUI() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          nodeTypes={{ text: TextNode }}
+          nodeTypes={nodeTypes}
           onInit={setReactFlowInstance}
           fitView
         >
