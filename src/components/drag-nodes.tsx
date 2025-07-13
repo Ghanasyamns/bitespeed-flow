@@ -17,7 +17,7 @@ export const DraggableNode = ({ type, label }: Props) => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-w-[80px] h-[60px] p-[5px] border border-[#1C2536] rounded-lg bg-[#1C2536] text-white cursor-grab active:cursor-grabbing"
+      className="flex flex-col items-center justify-center min-w-[80px] h-[60px] p-[5px] border border-blue-500 rounded-lg bg-white text-blue-500 cursor-grab active:cursor-grabbing"
       onDragStart={(event) => onDragStart(event, type)}
       onDragEnd={(event) =>
         ((event.target as HTMLElement).style.cursor = "grab")
