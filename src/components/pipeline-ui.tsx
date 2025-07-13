@@ -5,7 +5,6 @@ import {
   type Edge,
   type Node,
   type ReactFlowInstance,
-  type XYPosition,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useShallow } from "zustand/shallow";
@@ -36,22 +35,18 @@ export default function PipelineUI() {
     Node,
     Edge
   > | null>(null);
-  const {
-    nodes,
-    edges,
-    getNodeID,
-    addNode,
-    onNodesChange,
-    onEdgesChange,
-    onConnect,
-  } = useStore(shallow);
+  const { nodes, edges, addNode, onNodesChange, onEdgesChange, onConnect } =
+    useStore(shallow);
 
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
     (event: DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       if (reactFlowWrapper.current === null) return;
       const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
-      if (event?.dataTransfer?.getData("application/reactflow")) {
+      if (
+        event?.dataTransfer?.getData("application/reactflow") &&
+        reactFlowInstance
+      ) {
         const appData = JSON.parse(
           event.dataTransfer.getData("application/reactflow")
         );
@@ -62,24 +57,27 @@ export default function PipelineUI() {
           return;
         }
 
-        const position = reactFlowInstance?.flowToScreenPosition({
+        const position = reactFlowInstance.screenToFlowPosition({
           x: event.clientX - (reactFlowBounds?.left || 0),
           y: event.clientY - (reactFlowBounds?.top || 0),
         });
 
-        const nodeID = getNodeID(type);
+        const id = uuidv4();
         const newNode = {
-          id: uuidv4(),
+          id: id,
           type,
           position,
-          data: { id: nodeID, nodeType: `${type}` },
+          data: {
+            id: id,
+            nodeType: type,
+            message: `test message ${nodes.length + 1}`,
+          },
         };
 
         addNode(newNode);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [reactFlowInstance]
+    [addNode, nodes, reactFlowInstance]
   );
 
   const onDragOver = useCallback((event: DragEvent) => {
@@ -91,11 +89,6 @@ export default function PipelineUI() {
 
   return (
     <div className="w-full h-screen">
-      <div className="h-[10vh] flex justify-end pr-20 items-center">
-        <button className=" h-[40px] border rounded-md px-3  border-blue-400 text-blue-600 font-medium">
-          Save changes
-        </button>
-      </div>
       <div
         ref={reactFlowWrapper}
         style={{ width: "80vw", height: "90vh" }}
@@ -115,7 +108,6 @@ export default function PipelineUI() {
         >
           <Controls />
           <MiniMap />
-          {/* <Background variant={BackgroundVariant.Lines} gap={12} size={1} /> */}
         </ReactFlow>
         <Sidebar />
       </div>

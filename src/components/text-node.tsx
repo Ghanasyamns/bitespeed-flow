@@ -1,5 +1,10 @@
-function TextNode() {
-  return <div>text-node</div>;
+type Props = {
+  id: string;
+  data: Record<string, string>;
+  type: string;
+};
+function TextNode({ data }: Props) {
+  return <div>{data.message}</div>;
 }
 
 export default TextNode;
