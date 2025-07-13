@@ -9,7 +9,6 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useShallow } from "zustand/shallow";
 import { useStore, type FlowStore } from "../store";
-import Sidebar from "./sidebar";
 import TextNode from "./text-node";
 import {
   useCallback,
@@ -27,8 +26,8 @@ const selector = (state: FlowStore) => ({
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
+  isSidebarVisible: state.isSidebarVisible,
 });
-const nodeTypes = { text: TextNode };
 export default function PipelineUI() {
   const shallow = useShallow(selector);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -89,12 +88,8 @@ export default function PipelineUI() {
   }, []);
 
   return (
-    <div className="w-full h-screen">
-      <div
-        ref={reactFlowWrapper}
-        style={{ width: "80vw", height: "90vh" }}
-        className="flex"
-      >
+    <div className="w-full ">
+      <div ref={reactFlowWrapper} style={{ width: "80vw", height: "90vh" }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -103,14 +98,13 @@ export default function PipelineUI() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          nodeTypes={nodeTypes}
+          nodeTypes={{ text: TextNode }}
           onInit={setReactFlowInstance}
           fitView
         >
           <Controls />
           <MiniMap />
         </ReactFlow>
-        <Sidebar />
       </div>
     </div>
   );

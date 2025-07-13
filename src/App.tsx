@@ -1,6 +1,7 @@
 import "./App.css";
 import "@xyflow/react/dist/style.css";
 import PipelineUI from "./components/pipeline-ui";
+import SettingsPanel from "./components/settings-panel";
 
 function App() {
   return (
@@ -10,12 +11,10 @@ function App() {
           Save changes
         </button>
       </div>
-      <div className="flex-grow bg-gray-100">
+      <div className="flex bg-gray-100 h-screen">
         <PipelineUI />
+        <SettingsPanel />
       </div>
-      {/* <div className="w-1/4 border-l border-gray-300 bg-white">
-        <PipelineToolbar />
-      </div> */}
     </div>
   );
 }
