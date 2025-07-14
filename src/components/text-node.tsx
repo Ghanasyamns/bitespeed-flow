@@ -10,14 +10,14 @@ type Props = {
 function TextNode({ data }: Props) {
   const { message, handleTypes } = data;
   return (
-    <div className="bg-white shadow-md rounded-md overflow-hidden w-40">
-      <div className="bg-teal-100 px-4 py-1 flex items-center gap-2">
+    <div className="bg-white shadow-md rounded-md w-40">
+      <div className="bg-teal-100 px-3 py-1 flex items-center gap-2">
         <Message />
         <span className="font-semibold text-sm text-teal-800">
           Send Message
         </span>
       </div>
-      <div className="px-4 py-1 text-sm">{message}</div>
+      <div className="px-3 py-1 text-sm break-words">{message}</div>
       {handleTypes && handleTypes?.includes(EdgeEndpoint.Source) && (
         <Handle type="source" position={Position.Right} className="w-2 h-2" />
       )}
