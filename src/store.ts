@@ -94,18 +94,30 @@ export const useStore = create<FlowStore>((set, get) => ({
       ),
     });
   },
+  // updateNodeField: (nodeId, fieldName, fieldValue) => {
+  //   set({
+  //     nodes: get().nodes.map((node) => {
+  //       if (node.id === nodeId) {
+  //         return {
+  //           ...node,
+  //           data: { ...node.data, [fieldName]: fieldValue },
+  //         };
+  //       }
+  //       return node;
+  //     }),
+  //   });
+  // },
   updateNodeField: (nodeId, fieldName, fieldValue) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === nodeId) {
-          return {
-            ...node,
-            data: { ...node.data, [fieldName]: fieldValue },
-          };
-        }
-        return node;
-      }),
-    });
+    const nodes = get().nodes;
+    const index = nodes.findIndex((node) => node.id === nodeId);
+    if (index === -1) return; // Node not found
+    const newNodes = [...nodes];
+    newNodes[index] = {
+      ...newNodes[index],
+      data: { ...newNodes[index].data, [fieldName]: fieldValue },
+    };
+
+    set({ nodes: newNodes });
   },
   saveFlow: () => {
     const { nodes, edges, showToast } = get();
