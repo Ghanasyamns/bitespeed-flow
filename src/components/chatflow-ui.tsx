@@ -27,7 +27,7 @@ const selector = (state: FlowStore) => ({
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
 });
-export default function PipelineUI() {
+export default function ChatFlowUI() {
   const shallow = useShallow(selector);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<

@@ -12,6 +12,7 @@ import {
 } from "@xyflow/react";
 import { v4 as uuidv4 } from "uuid";
 import { EdgeEndpoint } from "./types/node-types";
+import type { ToastType } from "./types/toast-types";
 
 const initialNodes = [
   {
@@ -41,6 +42,7 @@ const initialEdges = [
     markerEnd: { type: MarkerType.Arrow, height: 20, width: 20 },
   },
 ];
+
 export type FlowStore = {
   nodes: Node[];
   edges: Edge[];
@@ -57,6 +59,9 @@ export type FlowStore = {
     fieldValue: string
   ) => void;
   saveFlow: () => void;
+  toast: ToastType;
+  showToast: (message: string, type: "success" | "error") => void;
+  hideToast: () => void;
 };
 
 export const useStore = create<FlowStore>((set, get) => ({
@@ -64,6 +69,7 @@ export const useStore = create<FlowStore>((set, get) => ({
   edges: initialEdges,
   nodeIDs: {},
   isNodeSelected: true,
+  toast: { message: "", type: "success", visible: false },
   removeSelectedNode: (node?: Node) => {
     if (node === undefined) return;
     const changes = [
@@ -128,7 +134,20 @@ export const useStore = create<FlowStore>((set, get) => ({
     });
   },
   saveFlow: () => {
-    const { nodes, edges } = get();
-    console.log("Saved Flow:", { nodes, edges });
+    const { nodes, edges, showToast } = get();
+    const nodesWithNoOutgoingEdges = nodes.filter(
+      (node) => !edges.some((edge) => edge.source === node.id)
+    );
+
+    if (nodes.length > 1 && nodesWithNoOutgoingEdges.length > 1) {
+      showToast("Error: Cannot save flow. ", "error");
+      return;
+    }
+    showToast("Flow saved successfully!", "success");
   },
+  showToast: (message, type) => {
+    set({ toast: { message, type, visible: true } });
+  },
+  hideToast: () =>
+    set((state) => ({ toast: { ...state.toast, visible: false } })),
 }));

@@ -1,20 +1,23 @@
 import "./App.css";
 import "@xyflow/react/dist/style.css";
-import PipelineUI from "./components/pipeline-ui";
+import ChatFlowUI from "./components/chatflow-ui";
 import SettingsPanel from "./components/settings-panel";
 
+import { useStore } from "./store";
+import { ChatFlowToolbar } from "./components/chatflow-toolbar";
+import Toast from "./components/toast";
+
 function App() {
+  const toast = useStore((state) => state.toast);
+
   return (
     <div className="">
-      <div className="h-[10vh] flex justify-end pr-20 items-center">
-        <button className=" h-[40px] border rounded-md px-3  border-blue-400 text-blue-600 font-medium">
-          Save changes
-        </button>
-      </div>
+      <ChatFlowToolbar />
       <div className="flex bg-gray-100 h-screen">
-        <PipelineUI />
+        <ChatFlowUI />
         <SettingsPanel />
       </div>
+      <Toast toast={toast} />
     </div>
   );
 }
