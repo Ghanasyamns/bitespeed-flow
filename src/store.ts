@@ -94,19 +94,7 @@ export const useStore = create<FlowStore>((set, get) => ({
       ),
     });
   },
-  // updateNodeField: (nodeId, fieldName, fieldValue) => {
-  //   set({
-  //     nodes: get().nodes.map((node) => {
-  //       if (node.id === nodeId) {
-  //         return {
-  //           ...node,
-  //           data: { ...node.data, [fieldName]: fieldValue },
-  //         };
-  //       }
-  //       return node;
-  //     }),
-  //   });
-  // },
+
   updateNodeField: (nodeId, fieldName, fieldValue) => {
     const nodes = get().nodes;
     const index = nodes.findIndex((node) => node.id === nodeId);
