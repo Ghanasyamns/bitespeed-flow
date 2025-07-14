@@ -26,7 +26,6 @@ const selector = (state: FlowStore) => ({
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
-  isSidebarVisible: state.isSidebarVisible,
 });
 export default function PipelineUI() {
   const shallow = useShallow(selector);

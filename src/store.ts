@@ -45,8 +45,7 @@ export type FlowStore = {
   nodes: Node[];
   edges: Edge[];
   nodeIDs: Record<string, number>;
-  isSidebarVisible: boolean;
-  toggleSidebar: () => void;
+  removeSelectedNode: (node: Node) => void;
   getNodeID: (type: string) => string;
   addNode: (node: Node) => void;
   onNodesChange: OnNodesChange;
@@ -64,8 +63,18 @@ export const useStore = create<FlowStore>((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
   nodeIDs: {},
-  isSidebarVisible: true,
-  toggleSidebar: () => set({ isSidebarVisible: !get().isSidebarVisible }),
+  isNodeSelected: true,
+  removeSelectedNode: (node?: Node) => {
+    if (node === undefined) return;
+    const changes = [
+      {
+        id: node.id,
+        type: "select" as const,
+        selected: false,
+      },
+    ];
+    set({ nodes: applyNodeChanges(changes, get().nodes) });
+  },
   getNodeID: (type) => {
     const newIDs = { ...get().nodeIDs };
     if (newIDs[type] === undefined) {
@@ -85,10 +94,8 @@ export const useStore = create<FlowStore>((set, get) => ({
   },
   onNodesChange: (changes) => {
     const nodes = applyNodeChanges(changes, get().nodes);
-    const selectedNodes = nodes.filter((node) => node.selected);
     set({
       nodes,
-      isSidebarVisible: selectedNodes.length === 0,
     });
   },
   onEdgesChange: (changes) => {
