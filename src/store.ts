@@ -1,18 +1,13 @@
-import { create } from "zustand";
 import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
-  type Edge,
   MarkerType,
   type Node,
-  type OnConnect,
-  type OnEdgesChange,
-  type OnNodesChange,
 } from "@xyflow/react";
 import { v4 as uuidv4 } from "uuid";
-import { EdgeEndpoint } from "./types/node-types";
-import type { ToastType } from "./types/toast-types";
+import { create } from "zustand";
+import { EdgeEndpoint, type FlowStore } from "./types/node-types";
 
 const initialNodes = [
   {
@@ -42,27 +37,6 @@ const initialEdges = [
     markerEnd: { type: MarkerType.Arrow, height: 20, width: 20 },
   },
 ];
-
-export type FlowStore = {
-  nodes: Node[];
-  edges: Edge[];
-  nodeIDs: Record<string, number>;
-  removeSelectedNode: (node: Node) => void;
-  getNodeID: (type: string) => string;
-  addNode: (node: Node) => void;
-  onNodesChange: OnNodesChange;
-  onEdgesChange: OnEdgesChange;
-  onConnect: OnConnect;
-  updateNodeField: (
-    nodeId: string,
-    fieldName: string,
-    fieldValue: string
-  ) => void;
-  saveFlow: () => void;
-  toast: ToastType;
-  showToast: (message: string, type: "success" | "error") => void;
-  hideToast: () => void;
-};
 
 export const useStore = create<FlowStore>((set, get) => ({
   nodes: initialNodes,
@@ -140,9 +114,26 @@ export const useStore = create<FlowStore>((set, get) => ({
     );
 
     if (nodes.length > 1 && nodesWithNoOutgoingEdges.length > 1) {
-      showToast("Error: Cannot save flow. ", "error");
+      showToast(
+        "Error: Cannot save flow. More than one node has empty target handles.",
+        "error"
+      );
       return;
     }
+
+    // Validate source handles: A source handle can only have one edge originating from it.
+    for (const node of nodes) {
+      const outgoingEdges = edges.filter((edge) => edge.source === node.id);
+      if (outgoingEdges.length > 1) {
+        showToast(
+          `Error: Node "${node.id}" has more than one outgoing edge from its source handle.`,
+          "error"
+        );
+        return;
+      }
+    }
+
+    console.log("Saved Flow:", { nodes, edges });
     showToast("Flow saved successfully!", "success");
   },
   showToast: (message, type) => {

@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/shallow";
-import { useStore, type FlowStore } from "../store";
+import { useStore } from "../store";
 import BackButton from "./icons/back-button";
+import type { FlowStore } from "../types/node-types";
 const selector = (state: FlowStore) => ({
   selectedNode: state.nodes.find((node) => node.selected),
   updateNodeField: state.updateNodeField,

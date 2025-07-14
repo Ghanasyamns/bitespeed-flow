@@ -1,7 +1,8 @@
 import { useShallow } from "zustand/shallow";
-import { useStore, type FlowStore } from "../store";
+import { useStore } from "../store";
 import CustomNodes from "./custom-nodes";
 import UpdateNode from "./update-node";
+import type { FlowStore } from "../types/node-types";
 
 const selector = (state: FlowStore) => ({
   selectedNode: state.nodes.find((node) => node.selected),

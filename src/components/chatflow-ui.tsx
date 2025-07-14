@@ -8,7 +8,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useShallow } from "zustand/shallow";
-import { useStore, type FlowStore } from "../store";
+import { useStore } from "../store";
 import TextNode from "./text-node";
 import {
   useCallback,
@@ -18,6 +18,7 @@ import {
   type DragEventHandler,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
+import type { FlowStore } from "../types/node-types";
 const selector = (state: FlowStore) => ({
   nodes: state.nodes,
   edges: state.edges,
